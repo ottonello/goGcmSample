@@ -48,8 +48,6 @@ func (app GcmPushApp) buildRequest(b []byte) (*http.Request, error) {
 func sendRequest(req *http.Request) {
 	client := &http.Client{}
 
-	fmt.Println("Sending request ", req)
-
 	resp, err := client.Do(req)
 
 	if err == nil {
