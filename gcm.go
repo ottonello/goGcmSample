@@ -21,7 +21,11 @@ type gcmPushData struct {
 	Message string `json:"message"`
 }
 
-func (app GcmPushApp) send(pushMessage PushMessage) {
+func NewGcmPushApp(apiKey string) GcmPushApp {
+	return GcmPushApp{apiKey}
+}
+
+func (app GcmPushApp) Send(pushMessage PushMessage) {
 	specificMessage := gcmPush{pushMessage.to, gcmPushData{Message: pushMessage.message}}
 	app.sendGcm(specificMessage)
 }

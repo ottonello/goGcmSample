@@ -1,48 +1,22 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
-type PushMessage struct {
-	to      string
-	message string
-}
-
-type Config struct {
-	GcmApiKey string `json:"gcmApiKey"`
-}
-
 func main() {
-	config := loadConfig()
-	fmt.Printf("Config %v\n", config)
+	argsWithoutProg := os.Args[1:]
 
-	gcmApp := GcmPushApp{config.GcmApiKey}
-	msg := PushMessage{"/topics/global", "hello world!"}
-
-	gcmApp.send(msg)
-}
-
-func loadConfig() Config {
-	file := readConfigFile("./config.json")
-	return unmarshalConfig(file)
-}
-
-func readConfigFile(configFile string) []byte {
-	file, e := ioutil.ReadFile(configFile)
-	if e != nil {
-		panic(fmt.Sprintf("Could not open config file %v\n", file))
+	if len(argsWithoutProg) < 2 {
+		fmt.Println("Supply arguments:\ngoGcmSample [to] [message]")
+		return
 	}
-	return file
-}
+	to := argsWithoutProg[0] // /topics/global
+	text := argsWithoutProg[1]
 
-func unmarshalConfig(file []byte) Config {
-	config := Config{}
-	err := json.Unmarshal(file, &config)
-	if err != nil {
-		panic(err)
-	}
-	return config
+	msg := PushMessage{to, text, GCM}
+
+	pushApp := NewPushApp()
+	pushApp.SendPush(msg)
 }
